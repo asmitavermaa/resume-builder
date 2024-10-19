@@ -1,0 +1,6 @@
+npx create-react-app resume-builder
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init
+npm install jspdf
+npm i
+npm install react-scripts
