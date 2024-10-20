@@ -1,6 +1,5 @@
 import { jsPDF } from "jspdf";
 
-// Helper function to split text and handle line breaks
 const splitText = (doc, text, maxWidth) => {
   return doc.splitTextToSize(text, maxWidth);
 };
@@ -11,16 +10,13 @@ export const generatePDF = (resumeData) => {
   const margin = 20;
   const maxWidth = pageWidth - margin * 2;
 
-  // Set title
   doc.setFontSize(22);
   doc.text("Resume", margin, 20);
 
   doc.setFontSize(16);
 
-  // Variable to track the current Y position
   let currentY = 40;
 
-  // Function to add new pages if needed
   const checkPageEnd = (doc, currentY, margin) => {
     const pageHeight = doc.internal.pageSize.getHeight();
     if (currentY >= pageHeight - margin) {

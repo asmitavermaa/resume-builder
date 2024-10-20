@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ResumeBuilder from './components/resumeBuilder';
-import { generatePDF } from './utils/pdfGenerator'; // Assuming you have a PDF generator utility
+import { generatePDF } from './utils/pdfGenerator';
 import './App.css';
 
 const App = () => {
