@@ -16,6 +16,8 @@ const ResumeBuilder = ({
   skills, setSkills, addSkill,
   achievements, setAchievements, addAchievement
 }) => {
+  // State to store all fetched resumes
+  const [allResumes, setAllResumes] = useState([]);
 
   // Function to handle saving the resume to the backend
   const handleSaveResume = async () => {
@@ -51,32 +53,29 @@ const ResumeBuilder = ({
     generatePDF(resumeData); // Pass the resumeData to the PDF generator
   };
 
-  // Function to fetch resumes from the backend
+  // Function to fetch all resumes from the backend
   const fetchResumes = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/resume'); // Adjust API URL if needed
       const resumes = response.data;
-      if (resumes.length > 0) {
-        const latestResume = resumes[resumes.length - 1]; // Get the most recent resume
-        setSummary(latestResume.summary || '');
-        setCareerObjective(latestResume.careerObjective || '');
-        setEducation(latestResume.education || [{ degree: '', institution: '', year: '' }]);
-        setExperience(latestResume.experience || [{ position: '', company: '', duration: '' }]);
-        setSkills(latestResume.skills || ['']);
-        setAchievements(latestResume.achievements || ['']);
-      }
+      setAllResumes(resumes); // Store all fetched resumes
     } catch (error) {
       console.error('Error fetching resumes:', error);
     }
   };
 
-  // UseEffect hook to fetch resumes on component mount
-  useEffect(() => {
-    fetchResumes();
-  }, []);
+  // Function to load a specific resume into the form fields
+  const loadResume = (resume) => {
+    setSummary(resume.summary || '');
+    setCareerObjective(resume.careerObjective || '');
+    setEducation(resume.education || [{ degree: '', institution: '', year: '' }]);
+    setExperience(resume.experience || [{ position: '', company: '', duration: '' }]);
+    setSkills(resume.skills || ['']);
+    setAchievements(resume.achievements || ['']);
+  };
 
   return (
-    <div className="bg-gray-100 p-6 rounded-lg shadow-lg">
+    <div className="bg-gray-100 p-6 rounded-lg shadow-lg w-full max-w-screen-lg mx-auto">
       <h1 className="text-4xl font-semibold text-gray-700 mb-2 text-center text-decoration-line: underline">Resume Builder</h1>
       <ProfessionalSummary summary={summary} setSummary={setSummary} />
       <CareerObjective careerObjective={careerObjective} setCareerObjective={setCareerObjective} />
@@ -85,14 +84,43 @@ const ResumeBuilder = ({
       <Skills skills={skills} setSkills={setSkills} addSkill={addSkill} />
       <Achievements achievements={achievements} setAchievements={setAchievements} addAchievement={addAchievement} />
 
-      <div className="flex space-x-4 mt-4">
-        <button onClick={handleGeneratePDF} className="bg-blue-500 text-white py-2 px-4 rounded-lg shadow hover:bg-blue-600">
+      {/* Centered Buttons */}
+      <div className="flex flex-col items-center space-y-4 mt-6">
+        {/* Generate PDF Button - Pink */}
+        <button onClick={handleGeneratePDF} className="bg-pink-500 text-white py-2 px-4 rounded-lg shadow hover:bg-pink-600">
           Generate PDF
         </button>
+        {/* Save Resume Button */}
         <button onClick={handleSaveResume} className="bg-green-500 text-white py-2 px-4 rounded-lg shadow hover:bg-green-600">
           Save Resume
         </button>
+        {/* Fetch All Resumes Button */}
+        <button onClick={fetchResumes} className="bg-purple-500 text-white py-2 px-4 rounded-lg shadow hover:bg-purple-600">
+          Fetch All Resumes
+        </button>
       </div>
+
+      {/* Display list of all fetched resumes */}
+      {allResumes.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-2xl font-semibold text-gray-700 mb-2">Saved Resumes</h2>
+          <ul>
+            {allResumes.map((resume, index) => (
+              <li key={index} className="mb-4 p-4 border rounded-lg bg-gray-200">
+                <p className="text-black"><strong>Summary:</strong> {resume.summary || 'No Summary'}</p>
+                <p className="text-black"><strong>Career Objective:</strong> {resume.careerObjective || 'No Career Objective'}</p>
+                {/* Other fields can be shown similarly */}
+                <button
+                  onClick={() => loadResume(resume)} // Load this resume into the form
+                  className="mt-2 bg-blue-500 text-white py-1 px-3 rounded-lg shadow hover:bg-blue-600"
+                >
+                  Load Resume
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 };
