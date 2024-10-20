@@ -1,6 +1,13 @@
+frontend-
 npx create-react-app resume-builder
 npm install -D tailwindcss postcss autoprefixer
 npx tailwindcss init
 npm install jspdf
 npm i
 npm install react-scripts
+
+backend-
+npm install -g nodemon
+npm install axios
+npm init -y
+npm install express mongoose cors body-parser
